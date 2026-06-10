@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="theme-color" content="#1a3a2a"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="ATS Digital"/>
+<title>ATS Digital — Los Azules</title>
+<style>
+:root{
+  --green:#1a3a2a;
+  --green-light:#2d5a42;
+  --green-pale:#f0fdf4;
+  --green-border:#86efac;
+  --amber:#ca8a04;
+  --amber-bg:#fef9c3;
+  --red:#dc2626;
+  --red-bg:#fee2e2;
+  --gray-50:#f9fafb;
+  --gray-100:#f3f4f6;
+  --gray-200:#e5e7eb;
+  --gray-400:#9ca3af;
+  --gray-600:#4b5563;
+  --gray-900:#111827;
+  --radius:10px;
+  --radius-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--gray-100);color:var(--gray-900);font-size:16px}
+/* HEADER */
+.app-header{background:var(--green);color:white;padding:14px 16px 12px;position:sticky;top:0;z-index:100}
+.app-header h1{font-size:15px;font-weight:600;letter-spacing:-.2px}
+.app-header p{font-size:11px;opacity:.7;margin-top:2px}
+/* PROGRESS */
+.progress-wrap{height:3px;background:rgba(255,255,255,.2)}
+.progress-bar{height:100%;background:#4ade80;transition:width .35s ease}
+/* STEP NAV */
+.step-nav{display:flex;background:white;border-bottom:1px solid var(--gray-200);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.step-nav::-webkit-scrollbar{display:none}
+.step-btn{flex:1;min-width:62px;padding:10px 4px 8px;border:none;background:none;cursor:pointer;text-align:center;border-bottom:2px solid transparent;color:var(--gray-400);font-size:10px;line-height:1.3;transition:color .2s}
+.step-btn i{display:block;font-size:18px;margin-bottom:3px}
+.step-btn.active{color:var(--green);border-bottom-color:var(--green);font-weight:600}
+.step-btn.done{color:#16a34a}
+/* SECTIONS */
+.section{display:none;padding:14px;padding-bottom:90px}
+.section.active{display:block}
+/* CARDS */
+.card{background:white;border-radius:var(--radius);border:1px solid var(--gray-200);padding:14px;margin-bottom:12px}
+.card-title{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.card-title i{font-size:15px}
+/* FIELDS */
+.field{margin-bottom:11px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12px;font-weight:500;color:var(--gray-600);margin-bottom:5px}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);
+  font-size:14px;color:var(--gray-900);background:var(--gray-50);
+  -webkit-appearance:none;appearance:none;outline:none;font-family:inherit
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green);background:white}
+.field textarea{resize:none;height:68px;line-height:1.5}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* TAGS / EPP */
+.tag-grid{display:flex;flex-wrap:wrap;gap:7px}
+.tag{font-size:12px;padding:6px 11px;border-radius:20px;border:1px solid var(--gray-200);background:var(--gray-50);cursor:pointer;color:var(--gray-600);transition:all .15s;user-select:none}
+.tag.sel{background:var(--green-pale);color:var(--green);border-color:var(--green-border);font-weight:500}
+/* RISK ROWS */
+.risk-card{background:white;border:1px solid var(--gray-200);border-radius:var(--radius);padding:12px;margin-bottom:10px}
+.risk-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.risk-num{width:24px;height:24px;border-radius:50%;background:var(--green);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.risk-label{font-size:13px;font-weight:600;color:var(--gray-900)}
+.nivel-row{display:flex;align-items:center;gap:8px;margin:8px 0}
+.nivel-label{font-size:11px;color:var(--gray-400);width:75px;flex-shrink:0}
+.nivel-btns{display:flex;gap:5px;flex-wrap:wrap}
+.nbtn{font-size:11px;padding:4px 10px;border-radius:12px;border:1px solid var(--gray-200);background:var(--gray-50);cursor:pointer;color:var(--gray-600);transition:all .15s}
+.nbtn.sel-B{background:#dcfce7;color:#15803d;border-color:#86efac;font-weight:600}
+.nbtn.sel-M{background:var(--amber-bg);color:var(--amber);border-color:#fde047;font-weight:600}
+.nbtn.sel-A{background:#ffedd5;color:#c2410c;border-color:#fed7aa;font-weight:600}
+.nbtn.sel-C{background:var(--red-bg);color:var(--red);border-color:#fca5a5;font-weight:600}
+/* RADIO SI/NO */
+.si-no{display:flex;gap:12px}
+.si-no label{display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;padding:8px 14px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);flex:1;justify-content:center}
+.si-no input[type=radio]{accent-color:var(--green);width:16px;height:16px}
+.si-no label:has(input:checked){background:var(--green-pale);border-color:var(--green-border);color:var(--green);font-weight:500}
+/* COLLAB */
+.collab-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.collab-n{font-size:12px;color:var(--gray-400);width:20px;text-align:right;flex-shrink:0}
+.collab-row input{flex:1;padding:9px 12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;background:var(--gray-50);font-family:inherit;outline:none}
+.collab-row input:focus{border-color:var(--green);background:white}
+/* FIRMA */
+.firma-box{border:1.5px dashed var(--gray-200);border-radius:var(--radius-sm);height:64px;display:flex;align-items:center;justify-content:center;color:var(--gray-400);font-size:13px;cursor:pointer;gap:8px;transition:all .2s;margin-top:6px}
+.firma-box.signed{border-color:var(--green);border-style:solid;background:var(--green-pale);color:var(--green);font-weight:500}
+/* RESUMEN */
+.resumen-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--gray-100);font-size:13px;gap:10px}
+.resumen-row:last-child{border-bottom:none}
+.resumen-key{color:var(--gray-400);flex-shrink:0}
+.resumen-val{font-weight:500;text-align:right;max-width:60%}
+/* ALERT */
+.alert{display:flex;gap:10px;padding:12px;border-radius:var(--radius-sm);font-size:12px;line-height:1.5;margin-bottom:12px}
+.alert-green{background:var(--green-pale);border:1px solid var(--green-border);color:#166534}
+.alert-amber{background:var(--amber-bg);border:1px solid #fde047;color:#713f12}
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--gray-200);padding:12px 16px;display:flex;gap:10px;z-index:100}
+.btn-back{flex:1;padding:12px;border:1px solid var(--gray-200);border-radius:var(--radius);background:none;color:var(--gray-600);font-size:14px;font-weight:500;cursor:pointer}
+.btn-next{flex:2.5;padding:12px;border:none;border-radius:var(--radius);background:var(--green);color:white;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-submit{flex:2.5;padding:12px;border:none;border-radius:var(--radius);background:#16a34a;color:white;font-size:14px;font-weight:600;cursor:pointer}
+/* STEP LABEL */
+.step-label{background:var(--gray-100);padding:10px 16px;font-size:12px;color:var(--gray-600);border-bottom:1px solid var(--gray-200)}
+/* SUCCESS SCREEN */
+.success-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;padding:32px 24px;text-align:center}
+.success-icon{width:72px;height:72px;border-radius:50%;background:var(--green-pale);border:2px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:20px}
+.success-screen h2{font-size:20px;font-weight:700;color:var(--green);margin-bottom:8px}
+.success-screen p{font-size:14px;color:var(--gray-600);line-height:1.6;margin-bottom:24px}
+.btn-nuevo{width:100%;padding:14px;background:var(--green);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer}
+/* LOADING */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(26,58,42,.85);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:white}
+.loading-overlay.show{display:flex}
+.spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* MATRIX BADGE */
+.matrix-info{font-size:11px;padding:4px 10px;border-radius:8px;background:var(--gray-100);color:var(--gray-600);display:inline-block;margin-top:6px}
+</style>
+<!-- Tabler Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css"/>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div style="font-size:14px;opacity:.9">Enviando ATS...</div>
+</div>
+
+<div class="app-header">
+  <h1>ATS Digital — Los Azules</h1>
+  <p>Análisis de Trabajo Seguro · Rev 0.1</p>
+</div>
+<div class="progress-wrap"><div class="progress-bar" id="prog" style="width:20%"></div></div>
+
+<div class="step-nav" id="step-nav">
+  <button class="step-btn active" id="snav0" onclick="goStep(0)"><i class="ti ti-file-description"></i>Datos</button>
+  <button class="step-btn" id="snav1" onclick="goStep(1)"><i class="ti ti-alert-triangle"></i>Riesgos</button>
+  <button class="step-btn" id="snav2" onclick="goStep(2)"><i class="ti ti-leaf"></i>Ambiente</button>
+  <button class="step-btn" id="snav3" onclick="goStep(3)"><i class="ti ti-users"></i>Equipo</button>
+  <button class="step-btn" id="snav4" onclick="goStep(4)"><i class="ti ti-circle-check"></i>Firma</button>
+</div>
+<div class="step-label" id="step-label">Paso 1 de 5 — Identificación de la tarea</div>
+
+<!-- PASO 1: IDENTIFICACIÓN -->
+<div class="section active" id="sec0">
+  <div class="card">
+    <div class="card-title"><i class="ti ti-file-description"></i> Identificación general</div>
+    <div class="row2">
+      <div class="field">
+        <label>Fecha <span style="color:red">*</span></label>
+        <input type="date" id="fecha" required/>
+      </div>
+      <div class="field">
+        <label>N° ATS interno</label>
+        <input type="text" id="num-ats" placeholder="Ej: ATS-0235"/>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Área / Empresa <span style="color:red">*</span></label>
+        <input type="text" id="area" placeholder="ACMSA / Contratista" required/>
+      </div>
+      <div class="field">
+        <label>Turno</label>
+        <select id="turno">
+          <option value="">Seleccionar</option>
+          <option>Día</option>
+          <option>Noche</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Supervisor a cargo <span style="color:red">*</span></label>
+      <input type="text" id="supervisor" placeholder="Nombre y apellido completo" required/>
+    </div>
+    <div class="field">
+      <label>Ubicación / Sector <span style="color:red">*</span></label>
+      <input type="text" id="ubicacion" placeholder="Ej: Zona GT Norte – Plataforma P20" required/>
+    </div>
+    <div class="field">
+      <label>Trabajo / Tarea / Actividad <span style="color:red">*</span></label>
+      <textarea id="tarea" placeholder="Descripción de la tarea a realizar..." required></textarea>
+    </div>
+    <div class="field">
+      <label>Herramientas y equipos a utilizar</label>
+      <textarea id="herramientas" placeholder="Listar equipos y herramientas..."></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-shield"></i> EPP obligatorios para la tarea</div>
+    <div class="tag-grid" id="epp-grid">
+      <span class="tag" onclick="toggleTag(this)">Casco</span>
+      <span class="tag" onclick="toggleTag(this)">Lentes de seguridad</span>
+      <span class="tag" onclick="toggleTag(this)">Guantes</span>
+      <span class="tag" onclick="toggleTag(this)">Botas de seguridad</span>
+      <span class="tag" onclick="toggleTag(this)">Chaleco reflectivo</span>
+      <span class="tag" onclick="toggleTag(this)">Protección auditiva</span>
+      <span class="tag" onclick="toggleTag(this)">Prot. respiratoria</span>
+      <span class="tag" onclick="toggleTag(this)">Arnés / línea de vida</span>
+      <span class="tag" onclick="toggleTag(this)">Protección solar</span>
+      <span class="tag" onclick="toggleTag(this)">Ropa ignífuga</span>
+      <span class="tag" onclick="toggleTag(this)">Careta facial</span>
+      <span class="tag" onclick="toggleTag(this)">Mameluco</span>
+    </div>
+  </div>
+</div>
+
+<!-- PASO 2: ANÁLISIS DE RIESGOS -->
+<div class="section" id="sec1">
+  <div class="alert alert-amber">
+    <i class="ti ti-info-circle" style="font-size:18px;flex-shrink:0;margin-top:1px"></i>
+    <div><strong>Completar al menos los pasos que aplican.</strong> Indicá nivel inicial de riesgo, las medidas de control, y el nivel final esperado tras aplicarlas.</div>
+  </div>
+  <div id="risk-container"></div>
+</div>
+
+<!-- PASO 3: MEDIO AMBIENTE -->
+<div class="section" id="sec2">
+  <div class="card">
+    <div class="card-title"><i class="ti ti-trash"></i> ¿Qué residuos puede generar la tarea?</div>
+    <div class="tag-grid" id="res-grid">
+      <span class="tag" onclick="toggleTag(this)">Domésticos</span>
+      <span class="tag" onclick="toggleTag(this)">Chatarra</span>
+      <span class="tag" onclick="toggleTag(this)">Desgaste / abrasivos</span>
+      <span class="tag" onclick="toggleTag(this)">Madera</span>
+      <span class="tag" onclick="toggleTag(this)">Botellas / plástico</span>
+      <span class="tag" onclick="toggleTag(this)">Peligroso sólido</span>
+      <span class="tag" onclick="toggleTag(this)">Peligroso líquido</span>
+      <span class="tag" onclick="toggleTag(this)">Tierra afectada</span>
+      <span class="tag" onclick="toggleTag(this)">Lodos de perforación</span>
+      <span class="tag" onclick="toggleTag(this)">Químicos varios</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-droplet"></i> ¿Existe riesgo de derrame?</div>
+    <div class="si-no">
+      <label><input type="radio" name="derrame" value="SI"> Sí</label>
+      <label><input type="radio" name="derrame" value="NO" checked> No</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-world"></i> Otros riesgos ambientales</div>
+    <div class="field">
+      <label>¿Existen otros riesgos ambientales? ¿Cuáles?</label>
+      <textarea id="otros-riesgos" placeholder="Descripción de riesgos ambientales adicionales..." style="height:56px"></textarea>
+    </div>
+    <div class="field">
+      <label>¿Qué controles adicionales se consideran?</label>
+      <textarea id="controles-amb" placeholder="Medidas de control ambiental a aplicar..." style="height:56px"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- PASO 4: EQUIPO DE TRABAJO -->
+<div class="section" id="sec3">
+  <div class="card">
+    <div class="card-title"><i class="ti ti-users"></i> Integrantes del equipo de trabajo</div>
+    <div id="collab-container"></div>
+    <div style="margin-top:10px;font-size:12px;color:var(--gray-400)">Completar solo los que participan en esta tarea.</div>
+  </div>
+</div>
+
+<!-- PASO 5: FIRMA Y ENVÍO -->
+<div class="section" id="sec4">
+  <div id="resumen-card" class="card">
+    <div class="card-title"><i class="ti ti-list-check"></i> Resumen del ATS</div>
+    <div id="resumen-body"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-pencil"></i> Autorizaciones y firmas</div>
+    <div class="field">
+      <label>Nombre y firma — Supervisor</label>
+      <div class="firma-box" id="firma-sup" onclick="firmar('firma-sup','supervisor')">
+        <i class="ti ti-signature" style="font-size:20px"></i> Toque para registrar firma
+      </div>
+    </div>
+    <div class="field" style="margin-top:14px">
+      <label>Nombre y firma — HSE / Empresa</label>
+      <div class="firma-box" id="firma-hse" onclick="firmarManual('firma-hse')">
+        <i class="ti ti-signature" style="font-size:20px"></i> Toque para registrar firma
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <label class="field" style="font-size:12px;color:var(--gray-600);display:block;margin-bottom:5px">Nombre HSE firmante</label>
+      <input type="text" id="hse-nombre" placeholder="Nombre y apellido del referente HSE" style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-size:14px;background:var(--gray-50);font-family:inherit;outline:none"/>
+    </div>
+  </div>
+
+  <div class="alert alert-green">
+    <i class="ti ti-leaf" style="font-size:20px;flex-shrink:0"></i>
+    <div>
+      <strong>Impacto ambiental positivo</strong><br>
+      Este ATS digital ahorra 1 hoja de papel. Tu área genera ~54.600 hojas/año menos con esta app. Cada ATS enviado suma al reporte ESG del proyecto.
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="success-screen">
+  <div class="success-icon">✓</div>
+  <h2>ATS enviado correctamente</h2>
+  <p>El formulario fue registrado con fecha y hora. El supervisor y HSE recibirán confirmación. Los datos quedan almacenados en el sistema del proyecto.</p>
+  <div style="background:var(--gray-100);border-radius:var(--radius);padding:14px;margin-bottom:24px;width:100%;text-align:left">
+    <div style="font-size:12px;color:var(--gray-400);margin-bottom:4px">N° de registro</div>
+    <div style="font-size:18px;font-weight:700;color:var(--green)" id="success-id">—</div>
+    <div style="font-size:12px;color:var(--gray-400);margin-top:6px" id="success-time">—</div>
+  </div>
+  <button class="btn-nuevo" onclick="nuevoATS()">Nuevo ATS</button>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav" id="bottom-nav">
+  <button class="btn-back" id="btn-back" onclick="navBack()" style="display:none">
+    <i class="ti ti-arrow-left"></i> Atrás
+  </button>
+  <button class="btn-next" id="btn-next" onclick="navNext()">
+    Siguiente <i class="ti ti-arrow-right"></i>
+  </button>
+</div>
+
+<script>
+// =============================================
+// CONFIGURACIÓN — EDITÁ ESTA LÍNEA
+// =============================================
+// Pegá acá la URL de tu Google Apps Script Web App
+// Instrucciones: ver README dentro del archivo
+const SHEETS_URL = "TU_GOOGLE_APPS_SCRIPT_URL_ACÁ";
+// =============================================
+
+let currentStep = 0;
+const TOTAL = 5;
+const LABELS = [
+  "Paso 1 de 5 — Identificación de la tarea",
+  "Paso 2 de 5 — Análisis de riesgos por paso",
+  "Paso 3 de 5 — Aspectos de medio ambiente",
+  "Paso 4 de 5 — Integrantes del equipo",
+  "Paso 5 de 5 — Revisión y firma"
+];
+
+const signed = {};
+
+// Init fecha
+document.getElementById('fecha').valueAsDate = new Date();
+
+// Init número ATS
+const pad = n => String(n).padStart(4,'0');
+document.getElementById('num-ats').value = 'ATS-' + pad(Math.floor(Math.random()*9000)+1000);
+
+// Build risk rows
+function buildRisks(){
+  const c = document.getElementById('risk-container');
+  for(let i=1;i<=10;i++){
+    c.innerHTML += `
+    <div class="risk-card">
+      <div class="risk-hdr">
+        <div class="risk-num">${i}</div>
+        <div class="risk-label">Paso ${i}</div>
+      </div>
+      <div class="field">
+        <input type="text" id="paso${i}" placeholder="Descripción del paso de la tarea..." style="font-size:13px"/>
+      </div>
+      <div class="field">
+        <input type="text" id="riesgo${i}" placeholder="Riesgos asociados a este paso..." style="font-size:13px"/>
+      </div>
+      <div class="nivel-row">
+        <span class="nivel-label">Riesgo inicial</span>
+        <div class="nivel-btns" id="ni${i}">
+          <button class="nbtn" onclick="setNivel('ni${i}',this,'B')">Bajo</button>
+          <button class="nbtn" onclick="setNivel('ni${i}',this,'M')">Medio</button>
+          <button class="nbtn" onclick="setNivel('ni${i}',this,'A')">Alto</button>
+          <button class="nbtn" onclick="setNivel('ni${i}',this,'C')">Crítico</button>
+        </div>
+      </div>
+      <div class="field">
+        <input type="text" id="control${i}" placeholder="Medidas de control a aplicar..." style="font-size:13px"/>
+      </div>
+      <div class="nivel-row">
+        <span class="nivel-label">Riesgo final</span>
+        <div class="nivel-btns" id="nf${i}">
+          <button class="nbtn" onclick="setNivel('nf${i}',this,'B')">Bajo</button>
+          <button class="nbtn" onclick="setNivel('nf${i}',this,'M')">Medio</button>
+          <button class="nbtn" onclick="setNivel('nf${i}',this,'A')">Alto</button>
+          <button class="nbtn" onclick="setNivel('nf${i}',this,'C')">Crítico</button>
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+// Build collaborators
+function buildCollabs(){
+  const c = document.getElementById('collab-container');
+  for(let i=1;i<=10;i++){
+    c.innerHTML += `<div class="collab-row">
+      <span class="collab-n">${i}</span>
+      <input type="text" id="col${i}" placeholder="Nombre y apellido"/>
+    </div>`;
+  }
+}
+
+function setNivel(gid, btn, val){
+  document.getElementById(gid).querySelectorAll('.nbtn').forEach(b=>b.className='nbtn');
+  btn.className = 'nbtn sel-'+val;
+}
+
+function getNivel(gid){
+  const sel = document.getElementById(gid).querySelector('.nbtn[class*=sel-]');
+  if(!sel) return '';
+  const cls = sel.className;
+  if(cls.includes('sel-B')) return 'Bajo';
+  if(cls.includes('sel-M')) return 'Medio';
+  if(cls.includes('sel-A')) return 'Alto';
+  if(cls.includes('sel-C')) return 'Crítico';
+  return '';
+}
+
+function toggleTag(el){ el.classList.toggle('sel'); }
+
+function getSelectedTags(gridId){
+  return [...document.querySelectorAll('#'+gridId+' .tag.sel')].map(t=>t.textContent.trim()).join(', ') || 'Ninguno';
+}
+
+function goStep(n){
+  if(n > currentStep && !validateStep(currentStep)) return;
+  document.getElementById('sec'+currentStep).classList.remove('active');
+  document.getElementById('snav'+currentStep).classList.remove('active');
+  if(n > currentStep) document.getElementById('snav'+currentStep).classList.add('done');
+  currentStep = n;
+  document.getElementById('sec'+n).classList.add('active');
+  document.getElementById('snav'+n).classList.add('active');
+  document.getElementById('prog').style.width = ((n+1)/TOTAL*100)+'%';
+  document.getElementById('step-label').textContent = LABELS[n];
+  document.getElementById('btn-back').style.display = n===0?'none':'block';
+  const btnNext = document.getElementById('btn-next');
+  if(n === TOTAL-1){
+    buildResumen();
+    btnNext.className='btn-submit';
+    btnNext.innerHTML='<i class="ti ti-send"></i> Enviar ATS';
+    btnNext.onclick = submitATS;
+  } else {
+    btnNext.className='btn-next';
+    btnNext.innerHTML='Siguiente <i class="ti ti-arrow-right"></i>';
+    btnNext.onclick = navNext;
+  }
+  window.scrollTo(0,0);
+}
+
+function navNext(){ if(currentStep < TOTAL-1) goStep(currentStep+1); }
+function navBack(){ if(currentStep > 0) goStep(currentStep-1); }
+
+function validateStep(step){
+  if(step===0){
+    const req = ['fecha','area','supervisor','ubicacion','tarea'];
+    for(const id of req){
+      const el = document.getElementById(id);
+      if(!el.value.trim()){
+        el.focus();
+        el.style.borderColor='var(--red)';
+        setTimeout(()=>el.style.borderColor='',2000);
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function firmar(id, sourceId){
+  if(signed[id]) return;
+  const nombre = document.getElementById(sourceId).value || 'Supervisor';
+  const now = new Date();
+  const hora = now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  const fecha = now.toLocaleDateString('es-AR');
+  signed[id] = {nombre, hora, fecha};
+  const el = document.getElementById(id);
+  el.classList.add('signed');
+  el.innerHTML = `<i class="ti ti-check" style="font-size:20px"></i> ${nombre} — ${fecha} ${hora}`;
+}
+
+function firmarManual(id){
+  if(signed[id]) return;
+  const nombre = document.getElementById('hse-nombre').value;
+  if(!nombre.trim()){
+    document.getElementById('hse-nombre').focus();
+    document.getElementById('hse-nombre').style.borderColor='var(--red)';
+    setTimeout(()=>document.getElementById('hse-nombre').style.borderColor='',2000);
+    return;
+  }
+  const now = new Date();
+  const hora = now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  const fecha = now.toLocaleDateString('es-AR');
+  signed[id] = {nombre, hora, fecha};
+  const el = document.getElementById(id);
+  el.classList.add('signed');
+  el.innerHTML = `<i class="ti ti-check" style="font-size:20px"></i> ${nombre} — ${fecha} ${hora}`;
+}
+
+function buildResumen(){
+  const eppSel = getSelectedTags('epp-grid');
+  const resSel = getSelectedTags('res-grid');
+  const derrame = document.querySelector('input[name=derrame]:checked');
+  const collabs = [...Array(10)].map((_,i)=>document.getElementById('col'+(i+1)).value).filter(v=>v.trim()).length;
+
+  // Contar pasos completados
+  let pasosOk = 0;
+  for(let i=1;i<=10;i++){
+    if(document.getElementById('paso'+i).value.trim()) pasosOk++;
+  }
+
+  document.getElementById('resumen-body').innerHTML = `
+    <div class="resumen-row"><span class="resumen-key">N° ATS</span><span class="resumen-val">${document.getElementById('num-ats').value}</span></div>
+    <div class="resumen-row"><span class="resumen-key">Fecha</span><span class="resumen-val">${document.getElementById('fecha').value}</span></div>
+    <div class="resumen-row"><span class="resumen-key">Turno</span><span class="resumen-val">${document.getElementById('turno').value||'—'}</span></div>
+    <div class="resumen-row"><span class="resumen-key">Supervisor</span><span class="resumen-val">${document.getElementById('supervisor').value}</span></div>
+    <div class="resumen-row"><span class="resumen-key">Área / Empresa</span><span class="resumen-val">${document.getElementById('area').value}</span></div>
+    <div class="resumen-row"><span class="resumen-key">Sector</span><span class="resumen-val">${document.getElementById('ubicacion').value}</span></div>
+    <div class="resumen-row"><span class="resumen-key">Tarea</span><span class="resumen-val" style="font-size:12px">${document.getElementById('tarea').value.substring(0,60)}${document.getElementById('tarea').value.length>60?'...':''}</span></div>
+    <div class="resumen-row"><span class="resumen-key">EPP seleccionados</span><span class="resumen-val" style="font-size:11px">${eppSel}</span></div>
+    <div class="resumen-row"><span class="resumen-key">Pasos de tarea cargados</span><span class="resumen-val">${pasosOk} de 10</span></div>
+    <div class="resumen-row"><span class="resumen-key">Residuos identificados</span><span class="resumen-val" style="font-size:11px">${resSel}</span></div>
+    <div class="resumen-row"><span class="resumen-key">Riesgo de derrame</span><span class="resumen-val">${derrame?derrame.value:'—'}</span></div>
+    <div class="resumen-row"><span class="resumen-key">Integrantes cargados</span><span class="resumen-val">${collabs}</span></div>
+  `;
+}
+
+function collectData(){
+  const riesgos = [];
+  for(let i=1;i<=10;i++){
+    const paso = document.getElementById('paso'+i).value.trim();
+    if(paso){
+      riesgos.push({
+        paso: i,
+        descripcion: paso,
+        riesgo: document.getElementById('riesgo'+i).value,
+        nivel_inicial: getNivel('ni'+i),
+        control: document.getElementById('control'+i).value,
+        nivel_final: getNivel('nf'+i)
+      });
+    }
+  }
+  const colabs = [];
+  for(let i=1;i<=10;i++){
+    const n = document.getElementById('col'+i).value.trim();
+    if(n) colabs.push(n);
+  }
+  const derrame = document.querySelector('input[name=derrame]:checked');
+  return {
+    num_ats: document.getElementById('num-ats').value,
+    fecha: document.getElementById('fecha').value,
+    turno: document.getElementById('turno').value,
+    area: document.getElementById('area').value,
+    supervisor: document.getElementById('supervisor').value,
+    ubicacion: document.getElementById('ubicacion').value,
+    tarea: document.getElementById('tarea').value,
+    herramientas: document.getElementById('herramientas').value,
+    epp: getSelectedTags('epp-grid'),
+    riesgos: JSON.stringify(riesgos),
+    residuos: getSelectedTags('res-grid'),
+    derrame: derrame?derrame.value:'NO',
+    otros_riesgos: document.getElementById('otros-riesgos').value,
+    controles_amb: document.getElementById('controles-amb').value,
+    integrantes: colabs.join(' | '),
+    firma_supervisor: signed['firma-sup'] ? signed['firma-sup'].nombre+' '+signed['firma-sup'].hora : '',
+    firma_hse: signed['firma-hse'] ? signed['firma-hse'].nombre+' '+signed['firma-hse'].hora : '',
+    timestamp: new Date().toISOString()
+  };
+}
+
+async function submitATS(){
+  const loading = document.getElementById('loading');
+  loading.classList.add('show');
+  const data = collectData();
+
+  // Si no hay URL configurada → modo demo
+  if(SHEETS_URL === "TU_GOOGLE_APPS_SCRIPT_URL_ACÁ"){
+    await new Promise(r=>setTimeout(r,1500));
+    loading.classList.remove('show');
+    showSuccess(data.num_ats);
+    console.log('DATOS ATS (modo demo):', data);
+    return;
+  }
+
+  try{
+    const params = new URLSearchParams(data);
+    await fetch(SHEETS_URL+'?'+params.toString(),{method:'GET',mode:'no-cors'});
+    loading.classList.remove('show');
+    showSuccess(data.num_ats);
+  } catch(e){
+    loading.classList.remove('show');
+    alert('Error al enviar. Verificá la conexión e intentá de nuevo.');
+    console.error(e);
+  }
+}
+
+function showSuccess(numAts){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('bottom-nav').style.display='none';
+  document.querySelector('.step-nav').style.display='none';
+  document.querySelector('.step-label').style.display='none';
+  const ss = document.getElementById('success-screen');
+  ss.style.display='flex';
+  document.getElementById('success-id').textContent = numAts;
+  document.getElementById('success-time').textContent = new Date().toLocaleString('es-AR');
+}
+
+function nuevoATS(){
+  location.reload();
+}
+
+buildRisks();
+buildCollabs();
+</script>
+
+<!--
+=======================================================
+README — CÓMO CONECTAR A GOOGLE SHEETS (5 pasos)
+=======================================================
+
+1. Abrí Google Sheets y creá una nueva planilla llamada "ATS Digital - Los Azules"
+
+2. Abrí el editor de scripts:
+   Extensiones → Apps Script
+
+3. Borrá el código que aparece y pegá este:
+
+function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = e.parameter;
+  sheet.appendRow([
+    data.timestamp, data.num_ats, data.fecha, data.turno,
+    data.area, data.supervisor, data.ubicacion, data.tarea,
+    data.herramientas, data.epp, data.riesgos,
+    data.residuos, data.derrame, data.otros_riesgos,
+    data.controles_amb, data.integrantes,
+    data.firma_supervisor, data.firma_hse
+  ]);
+  return ContentService.createTextOutput("OK");
+}
+
+4. Hacé clic en "Implementar" → "Nueva implementación"
+   - Tipo: Aplicación web
+   - Ejecutar como: Yo
+   - Quién tiene acceso: Cualquier usuario
+   → Copiá la URL que aparece
+
+5. En este archivo index.html, en la línea que dice:
+   const SHEETS_URL = "TU_GOOGLE_APPS_SCRIPT_URL_ACÁ";
+   Reemplazá el texto por la URL copiada.
+
+¡Listo! Cada ATS enviado aparece como una fila nueva en tu planilla.
+=======================================================
+-->
+</body>
+</html>
