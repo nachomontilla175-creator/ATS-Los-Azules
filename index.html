@@ -335,7 +335,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 // =============================================
 // Pegá acá la URL de tu Google Apps Script Web App
 // Instrucciones: ver README dentro del archivo
-const SHEETS_URL = "TU_GOOGLE_APPS_SCRIPT_URL_ACÁ";
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwigW7AF46VvVfvLp99ZKB-sIfwDVwV9QTOf_bNhBwDbLFjqmd2kx4cqBSpqpD12Ii9/exec";
 // =============================================
 
 let currentStep = 0;
@@ -582,7 +582,7 @@ async function submitATS(){
   const data = collectData();
 
   // Si no hay URL configurada → modo demo
-  if(SHEETS_URL === "TU_GOOGLE_APPS_SCRIPT_URL_ACÁ"){
+  if(SHEETS_URL === "https://script.google.com/macros/s/AKfycbwigW7AF46VvVfvLp99ZKB-sIfwDVwV9QTOf_bNhBwDbLFjqmd2kx4cqBSpqpD12Ii9/exec"){
     await new Promise(r=>setTimeout(r,1500));
     loading.classList.remove('show');
     showSuccess(data.num_ats);
@@ -654,7 +654,7 @@ function doGet(e) {
    → Copiá la URL que aparece
 
 5. En este archivo index.html, en la línea que dice:
-   const SHEETS_URL = "TU_GOOGLE_APPS_SCRIPT_URL_ACÁ";
+   const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwigW7AF46VvVfvLp99ZKB-sIfwDVwV9QTOf_bNhBwDbLFjqmd2kx4cqBSpqpD12Ii9/exec";
    Reemplazá el texto por la URL copiada.
 
 ¡Listo! Cada ATS enviado aparece como una fila nueva en tu planilla.
