@@ -582,7 +582,7 @@ async function submitATS(){
   const data = collectData();
 
   // Si no hay URL configurada → modo demo
-  if(SHEETS_URL === "https://script.google.com/macros/s/AKfycbwigW7AF46VvVfvLp99ZKB-sIfwDVwV9QTOf_bNhBwDbLFjqmd2kx4cqBSpqpD12Ii9/exec"){
+  if(SHEETS_URL === "DEMO/macros/s/AKfycbwigW7AF46VvVfvLp99ZKB-sIfwDVwV9QTOf_bNhBwDbLFjqmd2kx4cqBSpqpD12Ii9/exec"){
     await new Promise(r=>setTimeout(r,1500));
     loading.classList.remove('show');
     showSuccess(data.num_ats);
