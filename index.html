@@ -592,7 +592,7 @@ async function submitATS(){
 
   try{
     const params = new URLSearchParams(data);
-    await fetch(SHEETS_URL+'?'+params.toString(),{method:'GET',mode:'no-cors'});
+     await fetch(SHEETS_URL+'?'+params.toString());
     loading.classList.remove('show');
     showSuccess(data.num_ats);
   } catch(e){
