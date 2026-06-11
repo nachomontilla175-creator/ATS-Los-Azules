@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="theme-color" content="#1a3a2a"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="ATS — Supervisión"/>
+<title>ATS — Panel Supervisor</title>
+<style>
+:root{--green:#1a3a2a;--green-pale:#f0fdf4;--green-border:#86efac;--red:#dc2626;--red-bg:#fee2e2;--amber:#ca8a04;--amber-bg:#fef9c3;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-400:#9ca3af;--gray-600:#4b5563;--gray-900:#111827;--radius:10px;--radius-sm:6px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--gray-100);color:var(--gray-900);font-size:16px}
+.hdr{background:var(--green);color:white;padding:14px 16px;position:sticky;top:0;z-index:100}
+.hdr h1{font-size:15px;font-weight:600}
+.hdr p{font-size:11px;opacity:.7;margin-top:2px}
+.body{padding:14px;padding-bottom:40px}
+.card{background:white;border-radius:var(--radius);border:1px solid var(--gray-200);padding:14px;margin-bottom:12px}
+.card-title{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.ats-item{padding:12px 0;border-bottom:1px solid var(--gray-100);cursor:pointer}
+.ats-item:last-child{border-bottom:none}
+.ats-item-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.ats-num{font-size:13px;font-weight:600;color:var(--green)}
+.ats-badge{font-size:10px;padding:3px 8px;border-radius:10px}
+.badge-pend{background:var(--amber-bg);color:var(--amber)}
+.badge-ok{background:var(--green-pale);color:#15803d}
+.ats-meta{font-size:12px;color:var(--gray-400)}
+.detail{display:none;padding:14px;padding-bottom:80px}
+.detail.active{display:block}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gray-100);font-size:13px}
+.row:last-child{border-bottom:none}
+.row-key{color:var(--gray-400)}
+.row-val{font-weight:500;text-align:right;max-width:60%}
+.canvas-wrap{position:relative;border:1.5px dashed var(--gray-200);border-radius:var(--radius-sm);background:#fafafa;margin-top:6px}
+canvas{display:block;width:100%;height:140px;cursor:crosshair}
+.clear-btn{position:absolute;top:6px;right:6px;font-size:11px;padding:3px 8px;border:1px solid var(--gray-200);border-radius:6px;background:white;cursor:pointer;color:var(--gray-600)}
+.hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;color:var(--gray-400);pointer-events:none;text-align:center}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;font-weight:500;color:var(--gray-600);margin-bottom:5px}
+.field input{width:100%;padding:10px 12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-size:14px;background:#f9fafb;font-family:inherit;outline:none}
+.field input:focus{border-color:var(--green)}
+.btn-aprobar{width:100%;padding:14px;background:#16a34a;color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px}
+.btn-rechazar{width:100%;padding:12px;background:none;color:var(--red);border:1px solid var(--red);border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer}
+.btn-back-det{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--green);background:none;border:none;cursor:pointer;padding:0;margin-bottom:14px}
+.bottom-fixed{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--gray-200);padding:12px 16px}
+.alert{display:flex;gap:10px;padding:12px;border-radius:var(--radius-sm);font-size:12px;line-height:1.5;margin-bottom:12px}
+.alert-green{background:var(--green-pale);border:1px solid var(--green-border);color:#166534}
+.alert-red{background:var(--red-bg);border:1px solid #fca5a5;color:#991b1b}
+.empty{text-align:center;padding:40px 20px;color:var(--gray-400)}
+.empty i{font-size:40px;display:block;margin-bottom:12px}
+.loading{text-align:center;padding:40px;color:var(--gray-400)}
+.risk-item{background:var(--gray-100);border-radius:var(--radius-sm);padding:10px;margin-bottom:8px}
+.risk-item-title{font-size:12px;font-weight:600;margin-bottom:4px}
+.risk-item-meta{font-size:11px;color:var(--gray-600)}
+.nivel{display:inline-block;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600}
+.nivel-B{background:#dcfce7;color:#15803d}
+.nivel-M{background:var(--amber-bg);color:var(--amber)}
+.nivel-A{background:#ffedd5;color:#c2410c}
+.nivel-C{background:var(--red-bg);color:var(--red)}
+.success-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;padding:32px 24px;text-align:center}
+.success-icon{width:72px;height:72px;border-radius:50%;background:var(--green-pale);border:2px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:20px}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css"/>
+</head>
+<body>
+
+<div class="hdr">
+  <h1>Panel Supervisor — Los Azules</h1>
+  <p id="hdr-sub">Cargando ATS pendientes...</p>
+</div>
+
+<!-- LISTA DE ATS -->
+<div id="view-lista" class="body">
+  <div class="loading" id="loading-msg"><i class="ti ti-loader" style="font-size:28px;display:block;margin-bottom:8px"></i>Cargando...</div>
+  <div class="card" id="lista-pend" style="display:none">
+    <div class="card-title"><i class="ti ti-clock"></i> Pendientes de firma</div>
+    <div id="items-pend"></div>
+  </div>
+  <div class="card" id="lista-firm" style="display:none">
+    <div class="card-title"><i class="ti ti-circle-check"></i> Firmados hoy</div>
+    <div id="items-firm"></div>
+  </div>
+  <div class="empty" id="empty-msg" style="display:none">
+    <i class="ti ti-clipboard-check"></i>
+    No hay ATS pendientes de firma
+  </div>
+</div>
+
+<!-- DETALLE + FIRMA -->
+<div id="view-detalle" style="display:none">
+  <div class="body">
+    <button class="btn-back-det" onclick="volverLista()">
+      <i class="ti ti-arrow-left"></i> Volver a la lista
+    </button>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-file-description"></i> Datos del ATS</div>
+      <div id="detalle-body"></div>
+    </div>
+
+    <div class="card" id="riesgos-card" style="display:none">
+      <div class="card-title"><i class="ti ti-alert-triangle"></i> Análisis de riesgos</div>
+      <div id="riesgos-body"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-pencil"></i> Tu firma de aprobación</div>
+      <div class="field">
+        <label>Tu nombre completo</label>
+        <input type="text" id="sup-nombre-firma" placeholder="Nombre y apellido"/>
+      </div>
+      <label style="font-size:12px;color:var(--gray-600);margin-bottom:6px;display:block">Firma manuscrita</label>
+      <div class="canvas-wrap">
+        <canvas id="canvas-sup-panel"></canvas>
+        <button class="clear-btn" onclick="clearCanvasSup()">Limpiar</button>
+        <div class="hint" id="hint-canvas"><i class="ti ti-writing" style="font-size:20px;display:block;margin-bottom:4px"></i>Dibujá tu firma con el dedo</div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--gray-400)">Al firmar confirmás que revisaste el ATS y autorizás la ejecución de la tarea.</div>
+    </div>
+
+    <div id="msg-resultado" style="display:none"></div>
+  </div>
+
+  <div class="bottom-fixed">
+    <button class="btn-aprobar" onclick="aprobarATS()"><i class="ti ti-circle-check"></i> Aprobar y firmar ATS</button>
+    <button class="btn-rechazar" onclick="rechazarATS()"><i class="ti ti-x"></i> Rechazar</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="success-screen">
+  <div class="success-icon">✓</div>
+  <h2 style="color:var(--green);font-size:20px;font-weight:700;margin-bottom:8px">ATS aprobado</h2>
+  <p style="font-size:14px;color:var(--gray-600);line-height:1.6;margin-bottom:24px">Tu firma quedó registrada. El operador recibirá confirmación.</p>
+  <button onclick="volverLista()" style="width:100%;padding:14px;background:var(--green);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer">Ver más ATS</button>
+</div>
+
+<script>
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwigW7AF46VvVfvLp99ZKB-sIfwDVwV9QTOf_bNhBwDbLFjqmd2kx4cqBSpqpD12Ii9/exec";
+let atsData = [];
+let atsSeleccionado = null;
+let canvasCtx = null;
+let canvasDrawing = false;
+let canvasHasContent = false;
+
+// Obtener email del supervisor de la URL
+const urlParams = new URLSearchParams(window.location.search);
+const supEmail = urlParams.get('email') || '';
+const supNombre = urlParams.get('nombre') || '';
+
+document.getElementById('hdr-sub').textContent = supNombre ? `Bienvenido, ${supNombre}` : 'Panel de supervisión';
+
+async function cargarATS() {
+  try {
+    const resp = await fetch(SHEETS_URL + '?action=getATS&email=' + encodeURIComponent(supEmail));
+    const text = await resp.text();
+    let data;
+    try { data = JSON.parse(text); } catch(e) { data = []; }
+    atsData = Array.isArray(data) ? data : [];
+    renderLista();
+  } catch(e) {
+    // Modo demo con datos de ejemplo
+    atsData = [
+      {num_ats:'ATS-1234', fecha:'2026-06-10', turno:'Día', area:'ACMSA', supervisor:'Javier Montilla', ubicacion:'GT Norte - P20', tarea:'Perforación DDH en plataforma P20', epp:'Casco, Lentes, Guantes, Botas', riesgos:'[]', residuos:'Ninguno', derrame:'NO', integrantes:'Juan Pérez | Carlos López | María García', firmado:false},
+      {num_ats:'ATS-1235', fecha:'2026-06-10', turno:'Día', area:'HG Perforaciones', supervisor:'Javier Montilla', ubicacion:'Zona HY', tarea:'Mantenimiento de equipo de perforación', epp:'Casco, Lentes, Guantes', riesgos:'[]', residuos:'Chatarra', derrame:'NO', integrantes:'Pedro Díaz', firmado:false},
+    ];
+    renderLista();
+  }
+}
+
+function renderLista() {
+  const pend = atsData.filter(a => !a.firmado);
+  const firm = atsData.filter(a => a.firmado);
+  document.getElementById('loading-msg').style.display = 'none';
+
+  if(pend.length === 0 && firm.length === 0) {
+    document.getElementById('empty-msg').style.display = 'block';
+    return;
+  }
+
+  if(pend.length > 0) {
+    document.getElementById('lista-pend').style.display = 'block';
+    document.getElementById('items-pend').innerHTML = pend.map(a => itemHTML(a)).join('');
+  }
+  if(firm.length > 0) {
+    document.getElementById('lista-firm').style.display = 'block';
+    document.getElementById('items-firm').innerHTML = firm.map(a => itemHTML(a)).join('');
+  }
+}
+
+function itemHTML(a) {
+  return `<div class="ats-item" onclick="verDetalle('${a.num_ats}')">
+    <div class="ats-item-hdr">
+      <span class="ats-num">${a.num_ats}</span>
+      <span class="ats-badge ${a.firmado ? 'badge-ok' : 'badge-pend'}">${a.firmado ? 'Firmado' : 'Pendiente'}</span>
+    </div>
+    <div class="ats-meta">${a.tarea ? a.tarea.substring(0,50)+'...' : ''} · ${a.ubicacion}</div>
+    <div class="ats-meta" style="margin-top:2px">${a.fecha} · ${a.turno} · ${a.area}</div>
+  </div>`;
+}
+
+function verDetalle(numAts) {
+  atsSeleccionado = atsData.find(a => a.num_ats === numAts);
+  if(!atsSeleccionado) return;
+  const a = atsSeleccionado;
+
+  document.getElementById('detalle-body').innerHTML = `
+    <div class="row"><span class="row-key">N° ATS</span><span class="row-val">${a.num_ats}</span></div>
+    <div class="row"><span class="row-key">Fecha</span><span class="row-val">${a.fecha}</span></div>
+    <div class="row"><span class="row-key">Turno</span><span class="row-val">${a.turno||'—'}</span></div>
+    <div class="row"><span class="row-key">Área</span><span class="row-val">${a.area}</span></div>
+    <div class="row"><span class="row-key">Sector</span><span class="row-val">${a.ubicacion}</span></div>
+    <div class="row"><span class="row-key">Tarea</span><span class="row-val" style="font-size:12px">${a.tarea}</span></div>
+    <div class="row"><span class="row-key">EPP</span><span class="row-val" style="font-size:11px">${a.epp}</span></div>
+    <div class="row"><span class="row-key">Integrantes</span><span class="row-val" style="font-size:11px">${(a.integrantes||'').replace(/\|/g,'·')}</span></div>
+    <div class="row"><span class="row-key">Residuos</span><span class="row-val">${a.residuos}</span></div>
+    <div class="row"><span class="row-key">Riesgo derrame</span><span class="row-val">${a.derrame}</span></div>
+  `;
+
+  // Riesgos
+  try {
+    const riesgos = JSON.parse(a.riesgos || '[]');
+    if(riesgos.length > 0) {
+      document.getElementById('riesgos-card').style.display = 'block';
+      document.getElementById('riesgos-body').innerHTML = riesgos.map(r => `
+        <div class="risk-item">
+          <div class="risk-item-title">Paso ${r.paso}: ${r.descripcion}</div>
+          <div class="risk-item-meta">Riesgo: ${r.riesgo}</div>
+          <div class="risk-item-meta" style="margin-top:4px">
+            Inicial: <span class="nivel nivel-${r.nivel_inicial?r.nivel_inicial[0]:'B'}">${r.nivel_inicial||'—'}</span>
+            → Control: ${r.control}
+            → Final: <span class="nivel nivel-${r.nivel_final?r.nivel_final[0]:'B'}">${r.nivel_final||'—'}</span>
+          </div>
+        </div>`).join('');
+    }
+  } catch(e) {}
+
+  document.getElementById('view-lista').style.display = 'none';
+  document.getElementById('view-detalle').style.display = 'block';
+  document.getElementById('success-screen').style.display = 'none';
+
+  if(supNombre) document.getElementById('sup-nombre-firma').value = supNombre;
+
+  setTimeout(initCanvasSup, 100);
+}
+
+function volverLista() {
+  document.getElementById('view-lista').style.display = 'block';
+  document.getElementById('view-detalle').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('msg-resultado').style.display = 'none';
+}
+
+function initCanvasSup() {
+  const canvas = document.getElementById('canvas-sup-panel');
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+  canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+  canvasCtx = canvas.getContext('2d');
+  canvasCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  canvasCtx.strokeStyle = '#1a3a2a';
+  canvasCtx.lineWidth = 2.5;
+  canvasCtx.lineCap = 'round';
+  canvasCtx.lineJoin = 'round';
+  canvasHasContent = false;
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - r.left, y: src.clientY - r.top };
+  }
+  canvas.addEventListener('mousedown', e => { canvasDrawing=true; const p=getPos(e); canvasCtx.beginPath(); canvasCtx.moveTo(p.x,p.y); document.getElementById('hint-canvas').style.display='none'; });
+  canvas.addEventListener('mousemove', e => { if(!canvasDrawing) return; const p=getPos(e); canvasCtx.lineTo(p.x,p.y); canvasCtx.stroke(); canvasHasContent=true; });
+  canvas.addEventListener('mouseup', () => canvasDrawing=false);
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); canvasDrawing=true; const p=getPos(e); canvasCtx.beginPath(); canvasCtx.moveTo(p.x,p.y); document.getElementById('hint-canvas').style.display='none'; }, {passive:false});
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); if(!canvasDrawing) return; const p=getPos(e); canvasCtx.lineTo(p.x,p.y); canvasCtx.stroke(); canvasHasContent=true; }, {passive:false});
+  canvas.addEventListener('touchend', () => canvasDrawing=false);
+}
+
+function clearCanvasSup() {
+  const canvas = document.getElementById('canvas-sup-panel');
+  canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+  canvasHasContent = false;
+  document.getElementById('hint-canvas').style.display = 'block';
+}
+
+async function aprobarATS() {
+  const nombre = document.getElementById('sup-nombre-firma').value.trim();
+  if(!nombre) { document.getElementById('sup-nombre-firma').focus(); document.getElementById('sup-nombre-firma').style.borderColor='red'; return; }
+  if(!canvasHasContent) { alert('Por favor dibujá tu firma antes de aprobar.'); return; }
+
+  const canvas = document.getElementById('canvas-sup-panel');
+  const firmaImg = canvas.toDataURL('image/png');
+  const now = new Date();
+
+  const params = new URLSearchParams({
+    action: 'firmar',
+    num_ats: atsSeleccionado.num_ats,
+    supervisor: nombre,
+    timestamp_firma: now.toISOString(),
+    firma_img: firmaImg
+  });
+
+  try {
+    await fetch(SHEETS_URL + '?' + params.toString());
+  } catch(e) {}
+
+  document.getElementById('view-detalle').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'flex';
+  atsSeleccionado.firmado = true;
+}
+
+async function rechazarATS() {
+  if(!confirm('¿Rechazás este ATS? El operador será notificado.')) return;
+  const params = new URLSearchParams({
+    action: 'rechazar',
+    num_ats: atsSeleccionado.num_ats,
+    supervisor: document.getElementById('sup-nombre-firma').value || supNombre
+  });
+  try { await fetch(SHEETS_URL + '?' + params.toString()); } catch(e) {}
+  const msg = document.getElementById('msg-resultado');
+  msg.style.display = 'block';
+  msg.innerHTML = '<div class="alert alert-red"><i class="ti ti-x" style="font-size:18px;flex-shrink:0"></i><div><strong>ATS rechazado.</strong> El operador fue notificado.</div></div>';
+  setTimeout(volverLista, 2000);
+}
+
+cargarATS();
+</script>
+</body>
+</html>
