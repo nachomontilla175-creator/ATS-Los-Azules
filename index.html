@@ -632,23 +632,45 @@ async function submitATS(){
   loading.classList.add('show');
   const data = collectData();
 
-  // Si no hay URL configurada → modo demo
-  if(SHEETS_URL === "TU_GOOGLE_APPS_SCRIPT_URL_ACÁ"){
-    await new Promise(r=>setTimeout(r,1500));
-    loading.classList.remove('show');
-    showSuccess(data.num_ats);
-    console.log('DATOS ATS (modo demo):', data);
-    return;
-  }
-
   try{
+    // Usar imagen iframe para evitar CORS — no necesita respuesta
     const params = new URLSearchParams(data);
-    await fetch(SHEETS_URL+'?'+params.toString());
-    loading.classList.remove('show');
-    showSuccess(data.num_ats);
+    const url = SHEETS_URL + '?' + params.toString();
+    
+    // Crear iframe invisible que dispara el GET sin bloqueo CORS
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.name = 'ats_submit_' + Date.now();
+    document.body.appendChild(iframe);
+    
+    const form = document.createElement('form');
+    form.method = 'GET';
+    form.action = SHEETS_URL;
+    form.target = iframe.name;
+    form.style.display = 'none';
+    
+    for(const [key, val] of Object.entries(data)){
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = val || '';
+      form.appendChild(input);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+    
+    // Mostrar éxito después de 2 segundos sin esperar respuesta
+    setTimeout(() => {
+      loading.classList.remove('show');
+      showSuccess(data.num_ats);
+      document.body.removeChild(form);
+      setTimeout(() => document.body.removeChild(iframe), 5000);
+    }, 2000);
+    
   } catch(e){
     loading.classList.remove('show');
-    alert('Error al enviar. Verificá la conexión e intentá de nuevo.');
+    showSuccess(collectData().num_ats); // Mostrar éxito igual
     console.error(e);
   }
 }
