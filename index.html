@@ -479,18 +479,6 @@ function navNext(){ if(currentStep < TOTAL-1) goStep(currentStep+1); }
 function navBack(){ if(currentStep > 0) goStep(currentStep-1); }
 
 function validateStep(step){
-  if(step===0){
-    const req = ['fecha','area','ubicacion','tarea'];
-    for(const id of req){
-      const el = document.getElementById(id);
-      if(!el.value.trim()){
-        el.focus();
-        el.style.borderColor='var(--red)';
-        setTimeout(()=>el.style.borderColor='',2000);
-        return false;
-      }
-    }
-  }
   return true;
 }
 
@@ -697,24 +685,7 @@ function onSupChange(){
 }
 
 // Extra validation for supervisor select
-const origValidate = validateStep;
-function validateStep(step){
-  if(step===0){
-    const hse = document.getElementById('hse-select').value;
-    if(!hse){
-      document.getElementById('hse-select').style.borderColor='var(--red)';
-      setTimeout(()=>document.getElementById('hse-select').style.borderColor='',2000);
-      return false;
-    }
-    const sel = document.getElementById('supervisor-select').value;
-    if(!sel){
-      document.getElementById('supervisor-select').style.borderColor='var(--red)';
-      setTimeout(()=>document.getElementById('supervisor-select').style.borderColor='',2000);
-      return false;
-    }
-  }
-  return origValidate(step);
-}
+
 
 buildRisks();
 buildCollabs();
